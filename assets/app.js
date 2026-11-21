@@ -15,9 +15,11 @@ function pill(d) { return '<span class="pill" style="--c:' + DOM[d].color + '">'
 function rng(seed) { var a = seed >>> 0; return function () { a = (a + 0x6D2B79F5) >>> 0; var t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
 function shuffle(arr, r) { r = r || Math.random; var a = arr.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(r() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
 function hash(s) { var h = 2166136261; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return (h >>> 0).toString(36); }
+var SYNC_KEYS = ["qs", "weeks", "known", "hist"];
+function on(x) { return x === true || !!(x && x.v); }
 var store = {
   get: function (k, d) { try { var v = localStorage.getItem("pmp26_" + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
-  set: function (k, v) { try { localStorage.setItem("pmp26_" + k, JSON.stringify(v)); } catch (e) {} },
+  set: function (k, v) { try { localStorage.setItem("pmp26_" + k, JSON.stringify(v)); } catch (e) {} if (SYNC_KEYS.indexOf(k) >= 0) window.dispatchEvent(new Event("pmp-change")); },
   del: function (k) { try { localStorage.removeItem("pmp26_" + k); } catch (e) {} }
 };
 
@@ -29,7 +31,7 @@ var BYID = {}; QB.forEach(function (q) { BYID[q.id] = q; });
 function stats() { return store.get("qs", {}); }
 function record(q, ok) {
   var s = stats(); var x = s[q.id] || { n: 0, c: 0, w: false };
-  x.n++; if (ok) x.c++; x.w = !ok; s[q.id] = x; store.set("qs", s);
+  x.n++; if (ok) x.c++; x.w = !ok; x.t = Date.now(); s[q.id] = x; store.set("qs", s);
 }
 
 /* ================= theme ================= */
@@ -45,7 +47,7 @@ function record(q, ok) {
 })();
 
 /* ================= routing ================= */
-var VIEWS = ["tong-quan", "lo-trinh", "bai-hoc", "tu-duy", "cong-thuc", "the-tu", "luyen-tap", "de-thi"];
+var VIEWS = ["tong-quan", "lo-trinh", "bai-hoc", "tu-duy", "cong-thuc", "the-tu", "luyen-tap", "de-thi", "dong-bo"];
 function show() {
   var h = location.hash.slice(1); var v = VIEWS.indexOf(h) >= 0 ? h : "tong-quan";
   document.querySelectorAll("section.view").forEach(function (s) { s.classList.toggle("on", s.id === "v-" + v); });
@@ -168,7 +170,7 @@ function renderHome() {
   var s = stats(), seen = 0, corr = 0, att = 0, wrong = 0, by = {};
   Object.keys(DOM).forEach(function (k) { by[k] = { n: 0, c: 0 }; });
   Object.keys(s).forEach(function (id) { var q = BYID[id]; if (!q) return; seen++; att += s[id].n; corr += s[id].c; if (s[id].w) wrong++; by[q.d].n += s[id].n; by[q.d].c += s[id].c; });
-  var weeks = store.get("weeks", {}), wd = Object.keys(weeks).filter(function (k) { return weeks[k]; }).length, wt = WEEKS.reduce(function (a, w) { return a + w.tasks.length; }, 0);
+  var weeks = store.get("weeks", {}), wd = Object.keys(weeks).filter(function (k) { return on(weeks[k]); }).length, wt = WEEKS.reduce(function (a, w) { return a + w.tasks.length; }, 0);
   var hist = store.get("hist", []);
   var h = "<h3>Tiến độ của bạn</h3>";
   if (!att) {
@@ -188,8 +190,8 @@ function renderWeeks() {
   var done = store.get("weeks", {}), total = 0, dn = 0;
   $("weeks").innerHTML = WEEKS.map(function (w, i) {
     return '<div class="card week"><div class="num">T' + (i + 1) + "</div><div><h3>" + esc(w.t) + '</h3><div style="margin-top:6px">' + w.tasks.map(function (t, j) {
-      var id = "w" + i + "_" + j; total++; if (done[id]) dn++;
-      return '<div class="task"><input type="checkbox" id="' + id + '"' + (done[id] ? " checked" : "") + '><label for="' + id + '">' + esc(t) + "</label></div>";
+      var id = "w" + i + "_" + j; total++; if (on(done[id])) dn++;
+      return '<div class="task"><input type="checkbox" id="' + id + '"' + (on(done[id]) ? " checked" : "") + '><label for="' + id + '">' + esc(t) + "</label></div>";
     }).join("") + "</div></div></div>";
   }).join("");
   $("weekProg").style.width = (dn / total * 100) + "%";
@@ -197,7 +199,7 @@ function renderWeeks() {
 }
 $("weeks").addEventListener("change", function (e) {
   if (e.target.type !== "checkbox") return;
-  var d = store.get("weeks", {}); d[e.target.id] = e.target.checked; store.set("weeks", d); renderWeeks();
+  var d = store.get("weeks", {}); d[e.target.id] = { v: e.target.checked, t: Date.now() }; store.set("weeks", d); renderWeeks();
 });
 
 /* ================= bài học, tư duy ================= */
@@ -215,24 +217,24 @@ $("mindset").innerHTML = MINDSET.map(function (m, i) { return '<div class="card"
 var FC = { list: [], i: 0, flip: false };
 function fcBuild() {
   var known = store.get("known", {}); var mode = $("fMode").value;
-  FC.list = TERMS.map(function (t, i) { return i; }).filter(function (i) { return mode === "all" || !known[i]; });
+  FC.list = TERMS.map(function (t, i) { return i; }).filter(function (i) { return mode === "all" || !on(known[i]); });
   FC.i = 0; FC.flip = false; fcRender();
 }
 function fcRender() {
-  var known = store.get("known", {}); var n = Object.keys(known).filter(function (k) { return known[k]; }).length;
+  var known = store.get("known", {}); var n = Object.keys(known).filter(function (k) { return on(known[k]); }).length;
   $("fStat").textContent = "Đã thuộc " + n + "/" + TERMS.length;
   if (!FC.list.length) { $("flash").innerHTML = '<div><div class="term">Bạn đã thuộc hết thẻ</div><p class="muted" style="margin-top:8px">Chọn "Tất cả thẻ" để ôn lại.</p></div>'; return; }
   var t = TERMS[FC.list[FC.i]];
   $("flash").innerHTML = FC.flip ? '<div><div class="small muted">' + esc(t[0]) + '</div><p class="def" style="margin-top:8px">' + esc(t[1]) + "</p></div>"
     : '<div><div class="term">' + esc(t[0]) + '</div><p class="small muted" style="margin-top:10px">Thẻ ' + (FC.i + 1) + "/" + FC.list.length + " · bấm để xem nghĩa</p></div>";
-  $("fKnow").textContent = known[FC.list[FC.i]] ? "Bỏ đánh dấu đã thuộc" : "Đã thuộc";
+  $("fKnow").textContent = on(known[FC.list[FC.i]]) ? "Bỏ đánh dấu đã thuộc" : "Đã thuộc";
 }
 function fcFlip() { FC.flip = !FC.flip; fcRender(); }
 $("flash").addEventListener("click", fcFlip);
 $("flash").addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); fcFlip(); } });
 $("fNext").onclick = function () { if (!FC.list.length) return; FC.i = (FC.i + 1) % FC.list.length; FC.flip = false; fcRender(); };
 $("fPrev").onclick = function () { if (!FC.list.length) return; FC.i = (FC.i - 1 + FC.list.length) % FC.list.length; FC.flip = false; fcRender(); };
-$("fKnow").onclick = function () { if (!FC.list.length) return; var k = store.get("known", {}); var id = FC.list[FC.i]; k[id] = !k[id]; store.set("known", k); $("fNext").click(); };
+$("fKnow").onclick = function () { if (!FC.list.length) return; var k = store.get("known", {}); var id = FC.list[FC.i]; k[id] = { v: !on(k[id]), t: Date.now() }; store.set("known", k); $("fNext").click(); };
 $("fShuffle").onclick = function () { FC.list = shuffle(FC.list); FC.i = 0; FC.flip = false; fcRender(); };
 $("fMode").onchange = fcBuild;
 
@@ -409,7 +411,7 @@ function finishExam() {
   var c = 0;
   EX.items.forEach(function (it, k) { var q = BYID[it.id]; var ok = isRight(q, EX.ans[k]); by[q.d].t++; if (ok) { c++; by[q.d].c++; } if (EX.ans[k].length) record(q, ok); });
   var pct = Math.round(c / EX.items.length * 100);
-  var hist = store.get("hist", []); hist.unshift({ id: EX.def, name: EX.name, d: new Date().toLocaleDateString("vi-VN"), n: EX.items.length, p: pct }); store.set("hist", hist.slice(0, 30));
+  var hist = store.get("hist", []); hist.unshift({ ts: Date.now(), id: EX.def, name: EX.name, d: new Date().toLocaleDateString("vi-VN"), n: EX.items.length, p: pct }); store.set("hist", hist.slice(0, 30));
   var ks = Object.keys(by).filter(function (k) { return by[k].t; });
   var weakest = ks.sort(function (a, b) { return by[a].c / by[a].t - by[b].c / by[b].t; })[0];
   var h = '<div class="card"><h2>Kết quả: ' + esc(EX.name) + '</h2><p class="score" style="margin-top:8px">' + c + "/" + EX.items.length + "</p><p>" + verdict(pct) + '</p><div class="bars" style="margin-top:16px">' +
@@ -440,5 +442,9 @@ function renderExamHome() {
 }
 
 /* ================= khởi tạo ================= */
+window.PMP_REFRESH = function () {
+  renderWeeks(); fcRender(); renderHome();
+  if (location.hash.slice(1) === "de-thi" && !EX) renderExamHome();
+};
 renderWeeks(); fcBuild(); startPractice(); show();
 })();

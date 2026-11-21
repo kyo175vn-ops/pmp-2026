@@ -12,8 +12,9 @@
 </head>
 <body>
 <div class="wrap brand">
-  <span class="logo">PMP</span><span>Khoá luyện thi PMP 2026</span>
-  <button class="btn theme" id="themeBtn" type="button" aria-label="Đổi giao diện sáng/tối">Giao diện</button>
+  <span class="logo">PMP</span><span class="title">Khoá luyện thi PMP 2026</span>
+  <a class="btn theme" href="#dong-bo" id="syncBadge">Đồng bộ</a>
+  <button class="btn" id="themeBtn" type="button" aria-label="Đổi giao diện sáng/tối">Giao diện</button>
 </div>
 <nav class="tabs" aria-label="Mục lục"><div class="wrap">
   <a href="#tong-quan" data-v="tong-quan">Tổng quan</a>
@@ -56,6 +57,25 @@
     <a class="tile" href="#luyen-tap"><b>Luyện tập có giải thích</b><span class="muted small">Lọc theo domain, dạng câu, hoặc ôn lại câu đã sai.</span></a>
     <a class="tile" href="#de-thi"><b>Làm đề thi thử</b><span class="muted small">3 đề cố định 60 câu, đề mini 30 câu, đề mô phỏng 185 câu.</span></a>
     <a class="tile" href="#the-tu"><b>Học thẻ thuật ngữ</b><span class="muted small">Thuật ngữ cốt lõi dạng thẻ lật.</span></a>
+    <a class="tile" href="#dong-bo"><b>Đồng bộ máy tính và điện thoại</b><span class="muted small">Học ở đâu cũng tính chung một tiến độ.</span></a>
+  </div>
+</section>
+
+<section class="view" id="v-dong-bo">
+  <div class="card">
+    <h2>Đồng bộ tiến độ giữa máy tính và điện thoại</h2>
+    <p class="muted" style="margin-top:8px">Bật đồng bộ để câu đã làm, câu sai, lộ trình, thẻ đã thuộc và lịch sử thi được tính chung trên mọi thiết bị. Tiến độ được lưu trong một Gist riêng tư trên tài khoản GitHub của bạn. Làm một lần trên mỗi thiết bị.</p>
+    <p id="syncStatus" class="small muted" style="margin-top:10px"></p>
+  </div>
+  <div class="card" id="syncBox"></div>
+  <div class="card">
+    <h3>Cách gộp tiến độ</h3>
+    <ul class="clean">
+      <li>Tiến độ đã có trên từng thiết bị được gộp lại khi kết nối lần đầu, không mất dữ liệu.</li>
+      <li>Mỗi câu hỏi giữ kết quả từ thiết bị đã làm câu đó nhiều lần hơn. Lộ trình và thẻ thuật ngữ lấy thay đổi mới nhất. Lịch sử thi được cộng dồn.</li>
+      <li>Bài thi đang làm dở chỉ nằm trên thiết bị đang làm; kết quả được đồng bộ sau khi nộp bài.</li>
+      <li>Không có mạng: bạn vẫn học bình thường, tiến độ sẽ đồng bộ khi có mạng và mở lại trang.</li>
+    </ul>
   </div>
 </section>
 
@@ -201,5 +221,6 @@ Nội dung tóm tắt dựa trên thông báo cập nhật đề PMP 2026 của 
 <script src="data/bank-cases.js"></script>
 <script src="data/content.js"></script>
 <script src="assets/app.js"></script>
+<script src="assets/sync.js"></script>
 </body>
 </html>

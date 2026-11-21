@@ -13,7 +13,7 @@ Web học và luyện thi PMP bằng tiếng Việt, bám theo đề thi mới c
 - Luyện tập theo domain, dạng câu, câu chưa làm, câu đã sai
 - Đề thi thử: đề mini 30 câu, 3 đề cố định 60 câu, đề mô phỏng đầy đủ 185 câu / 240 phút có 2 lần nghỉ
 
-Tiến độ và lịch sử thi được lưu trong trình duyệt (localStorage), không gửi đi đâu.
+Tiến độ và lịch sử thi được lưu trong trình duyệt. Muốn học chung tiến độ trên máy tính và điện thoại, vào trang **Đồng bộ** và dán một mã truy cập GitHub chỉ có quyền `gist`: tiến độ được gộp và lưu vào một Gist riêng tư trên tài khoản của bạn (`assets/sync.js`).
 
 ## Cấu trúc
 
@@ -21,6 +21,7 @@ Tiến độ và lịch sử thi được lưu trong trình duyệt (localStorag
 index.html          trang chính
 assets/style.css    giao diện
 assets/app.js       logic học, luyện tập, thi thử
+assets/sync.js      đồng bộ tiến độ qua GitHub Gist
 data/bank-*.js      ngân hàng câu hỏi theo domain và case study
 data/content.js     lộ trình, bài học, tư duy, thuật ngữ
 ```
