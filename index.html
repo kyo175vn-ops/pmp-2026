@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Khoá luyện thi PMP 2026</title>
+<meta name="description" content="Web học và luyện thi PMP 2026 bằng tiếng Việt: lộ trình 8 tuần, bài học theo 3 domain, hơn 200 câu hỏi tình huống có giải thích, đề thi thử bấm giờ.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="wrap brand">
+  <span class="logo">PMP</span><span>Khoá luyện thi PMP 2026</span>
+  <button class="btn theme" id="themeBtn" type="button" aria-label="Đổi giao diện sáng/tối">Giao diện</button>
+</div>
+<nav class="tabs" aria-label="Mục lục"><div class="wrap">
+  <a href="#tong-quan" data-v="tong-quan">Tổng quan</a>
+  <a href="#lo-trinh" data-v="lo-trinh">Lộ trình</a>
+  <a href="#bai-hoc" data-v="bai-hoc">Bài học</a>
+  <a href="#tu-duy" data-v="tu-duy">Tư duy PMI</a>
+  <a href="#cong-thuc" data-v="cong-thuc">Công thức</a>
+  <a href="#the-tu" data-v="the-tu">Thẻ thuật ngữ</a>
+  <a href="#luyen-tap" data-v="luyen-tap">Luyện tập</a>
+  <a href="#de-thi" data-v="de-thi">Đề thi thử</a>
+</div></nav>
+
+<main><div class="wrap">
+
+<section class="view" id="v-tong-quan">
+  <div class="card">
+    <h1>Luyện thi PMP theo đề mới 2026</h1>
+    <p class="lede">Từ 9/7/2026, đề PMP theo Exam Content Outline mới: Business Environment tăng mạnh, thêm câu tình huống, câu đọc biểu đồ và các chủ đề AI, bền vững, giá trị. Web này đi cùng bạn từ ngày đầu đến ngày thi.</p>
+  </div>
+  <div class="facts">
+    <div class="fact"><b>185</b><span>câu hỏi</span></div>
+    <div class="fact"><b>240 phút</b><span>có 2 lần nghỉ</span></div>
+    <div class="fact"><b>~40 / 60</b><span>% Predictive / Agile &amp; Hybrid</span></div>
+    <div class="fact"><b id="bankCount">0</b><span>câu trong ngân hàng</span></div>
+  </div>
+  <div class="card">
+    <h3>Tỷ trọng domain</h3>
+    <div class="domainbar" style="margin-top:10px">
+      <div style="width:33%;background:var(--people)"></div><div style="width:41%;background:var(--process)"></div><div style="width:26%;background:var(--biz)"></div>
+    </div>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--people)"></i>People 33% (trước: 42%)</span>
+      <span><i class="dot" style="background:var(--process)"></i>Process 41% (trước: 50%)</span>
+      <span><i class="dot" style="background:var(--biz)"></i>Business Environment 26% (trước: 8%)</span>
+    </div>
+  </div>
+  <div class="card" id="homeStats"></div>
+  <div class="grid2">
+    <a class="tile" href="#lo-trinh"><b>Bắt đầu lộ trình 8 tuần</b><span class="muted small">Việc cần làm mỗi tuần, tick để theo dõi tiến độ.</span></a>
+    <a class="tile" href="#luyen-tap"><b>Luyện tập có giải thích</b><span class="muted small">Lọc theo domain, dạng câu, hoặc ôn lại câu đã sai.</span></a>
+    <a class="tile" href="#de-thi"><b>Làm đề thi thử</b><span class="muted small">3 đề cố định 60 câu, đề mini 30 câu, đề mô phỏng 185 câu.</span></a>
+    <a class="tile" href="#the-tu"><b>Học thẻ thuật ngữ</b><span class="muted small">Thuật ngữ cốt lõi dạng thẻ lật.</span></a>
+  </div>
+</section>
+
+<section class="view" id="v-lo-trinh">
+  <div class="card">
+    <h2>Lộ trình 8 tuần</h2>
+    <p class="muted" style="margin-top:8px">Mỗi ngày 1–1,5 giờ, cuối tuần 3 giờ. Đề PMP hỏi "bạn sẽ làm gì tiếp theo", vì vậy tuần nào cũng có phần luyện câu hỏi. Đọc kỹ giải thích của cả câu sai. Tiến độ được lưu trên trình duyệt này.</p>
+    <div style="margin-top:14px" class="stack">
+      <div class="progressline"><div id="weekProg" style="width:0%"></div></div>
+      <span class="small muted" id="weekProgText"></span>
+    </div>
+  </div>
+  <div id="weeks" class="stack"></div>
+  <div class="card">
+    <h3>Trước ngày thi</h3>
+    <ul class="clean">
+      <li>Điều kiện dự thi: 35 giờ đào tạo quản lý dự án và kinh nghiệm theo bằng cấp. PMI cập nhật yêu cầu giờ đào tạo trực tiếp từ 1/12/2026; khoá học hoàn thành trước ngày đó vẫn được tính.</li>
+      <li>Tải bản Exam Content Outline 2026 chính thức trên <a href="https://www.pmi.org/certifications/project-management-pmp/new-exam">pmi.org</a>. Đề bám theo ECO, không theo PMBOK.</li>
+      <li>Nên đặt lịch khi đạt từ 75% trở lên ổn định ở các đề đầy đủ.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="view" id="v-bai-hoc">
+  <div class="card"><h2>Bài học theo domain</h2><p class="muted" style="margin-top:8px">8 module tóm những gì đề hay hỏi và cách PMI muốn bạn hành xử. Mỗi module có nút luyện tập ngay domain tương ứng.</p></div>
+  <div id="lessons" class="stack"></div>
+</section>
+
+<section class="view" id="v-tu-duy">
+  <div class="card"><h2>12 nguyên tắc tư duy PMI</h2><p class="muted" style="margin-top:8px">Khi phân vân giữa hai đáp án, dùng các nguyên tắc này để loại trừ.</p></div>
+  <div class="mind" id="mindset"></div>
+  <div class="card">
+    <h3>Mẹo đọc câu hỏi</h3>
+    <ul class="clean">
+      <li>Gạch chân từ khoá FIRST, NEXT, BEST, MOST. "Làm gì trước tiên" thường là tìm hiểu, phân tích.</li>
+      <li>Xác định bối cảnh predictive, agile hay hybrid. Cùng tình huống, đáp án có thể khác.</li>
+      <li>Loại đáp án leo thang ngay, phớt lờ vấn đề, áp đặt, vi phạm quy trình hoặc đạo đức.</li>
+      <li>Câu chọn nhiều đáp án: đề ghi rõ số lượng cần chọn; phải đúng tất cả mới được điểm.</li>
+      <li>Câu đọc biểu đồ: đọc tên trục và đơn vị trước khi đọc câu hỏi.</li>
+      <li>Trung bình khoảng 78 giây mỗi câu. Câu nào quá 2 phút thì đánh dấu, đi tiếp, quay lại sau.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="view" id="v-cong-thuc">
+  <div class="card">
+    <h2>Bảng công thức</h2>
+    <div class="scroll" style="margin-top:12px"><table>
+      <thead><tr><th>Chỉ số</th><th>Công thức</th><th>Cách đọc</th></tr></thead>
+      <tbody>
+        <tr><td>Cost Variance</td><td><code>CV = EV − AC</code></td><td>Âm: vượt ngân sách</td></tr>
+        <tr><td>Schedule Variance</td><td><code>SV = EV − PV</code></td><td>Âm: chậm tiến độ</td></tr>
+        <tr><td>CPI</td><td><code>EV / AC</code></td><td>&lt; 1: vượt chi phí</td></tr>
+        <tr><td>SPI</td><td><code>EV / PV</code></td><td>&lt; 1: chậm tiến độ</td></tr>
+        <tr><td>EAC (giữ hiệu suất)</td><td><code>BAC / CPI</code></td><td>Dự báo tổng chi phí</td></tr>
+        <tr><td>EAC (sai lệch đột biến)</td><td><code>AC + (BAC − EV)</code></td><td>Phần còn lại theo kế hoạch</td></tr>
+        <tr><td>EAC (cả CPI và SPI)</td><td><code>AC + (BAC − EV) / (CPI × SPI)</code></td><td>Khi tiến độ ảnh hưởng chi phí</td></tr>
+        <tr><td>ETC</td><td><code>EAC − AC</code></td><td>Còn cần bao nhiêu</td></tr>
+        <tr><td>VAC</td><td><code>BAC − EAC</code></td><td>Âm: sẽ vượt ngân sách</td></tr>
+        <tr><td>TCPI</td><td><code>(BAC − EV) / (BAC − AC)</code></td><td>Hiệu suất cần đạt để về BAC</td></tr>
+        <tr><td>PERT</td><td><code>(O + 4M + P) / 6</code></td><td>Ước lượng 3 điểm</td></tr>
+        <tr><td>Độ lệch chuẩn</td><td><code>(P − O) / 6</code></td><td>Độ bất định</td></tr>
+        <tr><td>Kênh giao tiếp</td><td><code>n(n − 1) / 2</code></td><td>n = số người</td></tr>
+        <tr><td>Float</td><td><code>LS − ES</code> = <code>LF − EF</code></td><td>Đường găng float = 0</td></tr>
+        <tr><td>Số sprint còn lại</td><td><code>Điểm còn lại / Velocity</code></td><td>Làm tròn lên</td></tr>
+        <tr><td>Little's Law</td><td><code>Cycle time = WIP / Throughput</code></td><td>WIP tăng thì chờ lâu hơn</td></tr>
+        <tr><td>EMV</td><td><code>Xác suất × Tác động</code></td><td>Cơ hội dương, đe doạ âm</td></tr>
+        <tr><td>NPV, IRR</td><td>Chọn giá trị lớn hơn</td><td>Payback: chọn ngắn hơn</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div class="card">
+    <h3>Biểu đồ hay gặp</h3>
+    <ul class="clean">
+      <li><b>Burndown</b>: đường thực tế trên đường lý tưởng là chậm; đi ngang là có trở ngại.</li>
+      <li><b>Burnup</b>: tách việc hoàn thành và tổng phạm vi; đường phạm vi tăng là scope tăng.</li>
+      <li><b>Cumulative Flow Diagram</b>: dải nào phình to là nút thắt ở trạng thái đó.</li>
+      <li><b>Control chart</b>: điểm ngoài giới hạn, hoặc 7 điểm liên tiếp cùng một phía trung bình, cần điều tra.</li>
+      <li><b>S-curve EVM</b>: EV dưới PV là chậm; AC trên EV là vượt chi phí.</li>
+      <li><b>Pareto</b>: ưu tiên vài nguyên nhân gây phần lớn lỗi.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="view" id="v-the-tu">
+  <div class="card">
+    <h2>Thẻ thuật ngữ</h2>
+    <p class="muted" style="margin-top:8px">Bấm vào thẻ để lật. Đánh dấu "Đã thuộc" để thẻ không xuất hiện trong lượt "Chưa thuộc".</p>
+    <div class="controls" style="margin-top:12px">
+      <label for="fMode" class="small muted">Bộ thẻ</label>
+      <select id="fMode"><option value="all">Tất cả thẻ</option><option value="todo">Chỉ thẻ chưa thuộc</option></select>
+      <button class="btn" id="fShuffle" type="button">Xáo trộn</button>
+      <span class="small muted" id="fStat"></span>
+    </div>
+  </div>
+  <div class="card flash" id="flash" tabindex="0" role="button" aria-label="Lật thẻ"></div>
+  <div class="controls">
+    <button class="btn" id="fPrev" type="button">Thẻ trước</button>
+    <button class="btn" id="fKnow" type="button">Đã thuộc</button>
+    <button class="btn primary" id="fNext" type="button">Thẻ tiếp</button>
+  </div>
+</section>
+
+<section class="view" id="v-luyen-tap">
+  <div class="card">
+    <h2>Luyện tập có giải thích</h2>
+    <div class="controls" style="margin-top:12px">
+      <label for="pDomain" class="small muted">Domain</label>
+      <select id="pDomain"><option value="all">Tất cả</option><option value="people">People</option><option value="process">Process</option><option value="biz">Business Environment</option></select>
+      <label for="pType" class="small muted">Dạng câu</label>
+      <select id="pType"><option value="all">Tất cả</option><option value="multi">Chọn nhiều đáp án</option><option value="fig">Đọc biểu đồ</option><option value="case">Case study</option><option value="agile">Bối cảnh agile/hybrid</option><option value="pred">Bối cảnh predictive</option></select>
+      <label for="pSet" class="small muted">Nguồn</label>
+      <select id="pSet"><option value="all">Mọi câu</option><option value="new">Câu chưa làm</option><option value="wrong">Câu đã sai</option></select>
+      <button class="btn primary" id="pStart" type="button">Bắt đầu lượt mới</button>
+    </div>
+    <p class="small muted" id="pStat" style="margin-top:10px"></p>
+  </div>
+  <div id="practice"></div>
+</section>
+
+<section class="view" id="v-de-thi">
+  <div id="examHome" class="stack">
+    <div class="card">
+      <h2>Đề thi thử</h2>
+      <p class="muted" style="margin-top:8px">Như phòng thi: không xem đáp án cho đến khi nộp bài. Thời gian theo tỷ lệ đề thật (khoảng 78 giây/câu). Câu hỏi được lấy theo tỷ trọng domain và có case study. Bài đang làm được lưu lại nếu bạn lỡ tải lại trang.</p>
+    </div>
+    <div id="resume"></div>
+    <div class="exams" id="examList"></div>
+    <div class="card" id="examHist"></div>
+  </div>
+  <div id="examRun"></div>
+</section>
+
+</div></main>
+<div class="wrap"><footer>
+Nội dung tóm tắt dựa trên thông báo cập nhật đề PMP 2026 của PMI. Câu hỏi là câu luyện tập tự soạn, không phải câu hỏi đề thật. Mức đánh giá theo domain là ước tính để tự học. PMP và PMBOK là nhãn hiệu của Project Management Institute.
+</footer></div>
+
+<script src="data/bank-core.js"></script>
+<script src="data/bank-people.js"></script>
+<script src="data/bank-process.js"></script>
+<script src="data/bank-biz.js"></script>
+<script src="data/bank-cases.js"></script>
+<script src="data/content.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
