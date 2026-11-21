@@ -134,13 +134,15 @@ function render() {
   if (cfg && cfg.gist) {
     box.innerHTML = '<p>Đang đồng bộ với tài khoản GitHub <b>' + (cfg.login || "") + '</b>. Tiến độ tự đồng bộ sau mỗi lần bạn làm bài, và khi bạn mở lại trang.</p>' +
       '<div class="controls" style="margin-top:12px"><button class="btn primary" type="button" id="syncNow">Đồng bộ ngay</button><button class="btn" type="button" id="syncOff">Ngắt kết nối trên thiết bị này</button></div>' +
+      '<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--line)"><h3>Kết nối điện thoại</h3><p class="small muted" style="margin-top:4px">Không cần dán mã trên điện thoại: hiện mã QR ở đây và quét bằng Camera của iPhone.</p><div class="controls" style="margin-top:10px"><button class="btn" type="button" id="qrBtn">Hiện mã QR để kết nối điện thoại</button></div><div id="qrBox" style="margin-top:12px"></div></div>' +
       '<p class="small muted" style="margin-top:10px">Dữ liệu nằm trong một Gist riêng tư tên "' + FILE + '" trên tài khoản của bạn: <a href="https://gist.github.com/' + cfg.gist + '" target="_blank" rel="noopener">xem Gist</a>.</p>';
     $("syncNow").onclick = sync; $("syncOff").onclick = disconnect;
+    $("qrBtn").onclick = function () { if ($("qrCode")) hideQr(); else showQr(); };
   } else {
     box.innerHTML = '<ol class="clean">' +
       '<li>Mở trang <a href="https://github.com/settings/tokens/new?scopes=gist&description=PMP%202026%20sync" target="_blank" rel="noopener">tạo mã truy cập GitHub</a> (đã chọn sẵn quyền <b>gist</b>). Chọn thời hạn, ví dụ 1 năm, rồi bấm <b>Generate token</b>.</li>' +
       '<li>Sao chép mã (bắt đầu bằng <code>ghp_</code>) và dán vào ô dưới, bấm <b>Kết nối</b>.</li>' +
-      '<li>Trên điện thoại, mở web này và dán <b>cùng mã đó</b>. Lưu mã vào trình quản lý mật khẩu hoặc ghi chú riêng tư để dùng lại.</li></ol>' +
+      '<li>Sau khi kết nối trên máy tính, trang này sẽ có mã QR: quét bằng Camera điện thoại là điện thoại tự kết nối, không cần dán mã.</li></ol>' +
       '<form id="syncForm" class="controls" style="margin-top:12px"><label for="syncToken" class="small muted">Mã truy cập</label>' +
       '<input id="syncToken" type="password" autocomplete="off" spellcheck="false" placeholder="ghp_…" style="flex:1;min-width:200px;padding:9px 10px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit">' +
       '<button class="btn primary" type="submit">Kết nối</button></form>' +
@@ -150,7 +152,51 @@ function render() {
   status();
 }
 
+/* ---------- ghép nối điện thoại bằng mã QR ---------- */
+function pairLink() {
+  var payload = btoa(unescape(encodeURIComponent(JSON.stringify({ t: cfg.token, g: cfg.gist, l: cfg.login }))));
+  return location.origin + location.pathname + "#ket-noi=" + encodeURIComponent(payload);
+}
+function loadQrLib() {
+  if (window.qrcode) return Promise.resolve();
+  return new Promise(function (ok, fail) {
+    var sc = document.createElement("script");
+    sc.src = "assets/qrcode.js";
+    sc.onload = ok; sc.onerror = function () { fail(new Error("Không tải được mã QR. Kiểm tra mạng rồi thử lại.")); };
+    document.head.appendChild(sc);
+  });
+}
+var qrTimer = null;
+function showQr() {
+  var box = $("qrBox"); if (!box) return;
+  loadQrLib().then(function () {
+    box.innerHTML = '<div id="qrCode" style="background:#fff;padding:12px;border-radius:10px;display:inline-block"></div>' +
+      '<p class="small muted" style="margin-top:8px">Mở ứng dụng Camera trên iPhone, hướng vào mã này và chạm vào đường link hiện ra. Mã tự ẩn sau 2 phút.</p>' +
+      '<p class="small no" style="margin-top:4px">Không chụp hay gửi mã này cho người khác: ai quét được mã sẽ truy cập được Gist tiến độ của bạn.</p>';
+    var qr = window.qrcode(0, "M"); qr.addData(pairLink()); qr.make();
+    $("qrCode").innerHTML = qr.createSvgTag({ cellSize: 4, margin: 2, scalable: true });
+    var svg = $("qrCode").querySelector("svg"); if (svg) { svg.style.width = "220px"; svg.style.height = "220px"; }
+    $("qrCode").dataset.link = pairLink();
+    clearTimeout(qrTimer); qrTimer = setTimeout(hideQr, 120000);
+    $("qrBtn").textContent = "Ẩn mã QR";
+  }).catch(function (e) { status(e.message, true); });
+}
+function hideQr() { clearTimeout(qrTimer); var box = $("qrBox"); if (box) box.innerHTML = ""; var b = $("qrBtn"); if (b) b.textContent = "Hiện mã QR để kết nối điện thoại"; }
+function checkPairHash() {
+  var h = location.hash;
+  if (h.indexOf("#ket-noi=") !== 0) return false;
+  var raw = decodeURIComponent(h.slice(9));
+  history.replaceState(null, "", location.pathname + "#dong-bo");
+  window.dispatchEvent(new HashChangeEvent("hashchange"));
+  try {
+    var o = JSON.parse(decodeURIComponent(escape(atob(raw))));
+    if (!o.t) throw new Error();
+    connect(o.t);
+  } catch (e) { status("Mã QR không hợp lệ. Hãy hiện lại mã QR trên máy tính và quét lại.", true); }
+  return true;
+}
+
 render();
-if (cfg && cfg.gist) sync();
+if (!checkPairHash() && cfg && cfg.gist) sync();
 window.PMP_SYNC = { merge: merge, sync: sync };
 })();
